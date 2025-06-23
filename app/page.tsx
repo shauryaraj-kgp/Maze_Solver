@@ -11,15 +11,14 @@ import { Cell, Coord, Step } from '../types/types';
 const ROWS = 15;
 const COLS = 20;
 const ALGORITHMS = [
-    { name: 'BFS', fn: bfs },
-    { name: 'DFS', fn: dfs },
-    { name: 'A*', fn: aStar },
-    { name: 'Backtracking', fn: backtracking },
+    { name: 'BFS', fn: bfs, description: 'Breadth-First Search' },
+    { name: 'DFS', fn: dfs, description: 'Depth-First Search' },
+    { name: 'A*', fn: aStar, description: 'A* Algorithm' },
+    { name: 'Backtracking', fn: backtracking, description: 'Backtracking' },
 ];
 
 export default function Home() {
-    const [extraPaths, setExtraPaths] = useState(10);
-    const [grid, setGrid] = useState<Cell[][]>(() => generateMaze(ROWS, COLS, 10));
+    const [grid, setGrid] = useState<Cell[][]>(() => generateMaze(ROWS, COLS, 50));
     const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>('BFS');
     const [visited, setVisited] = useState<Step[]>([]);
     const [path, setPath] = useState<Step[]>([]);
@@ -31,7 +30,7 @@ export default function Home() {
 
     // Generate a new maze
     const handleGenerate = () => {
-        setGrid(generateMaze(ROWS, COLS, extraPaths));
+        setGrid(generateMaze(ROWS, COLS, 50));
         setVisited([]);
         setPath([]);
         setPlayer({ row: 0, col: 0 });
@@ -104,56 +103,70 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="w-full max-w-3xl mx-auto py-8 px-4 flex flex-col items-center gap-8">
-            <h1 className="text-3xl font-bold text-center mb-4">Escape the Maze</h1>
-            <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
-                <label className="flex items-center gap-2">
-                    Algorithm:
-                    <select
-                        value={selectedAlgorithm}
-                        onChange={e => setSelectedAlgorithm(e.target.value)}
-                        className="text-black px-2 py-1 rounded"
-                    >
-                        {ALGORITHMS.map(a => (
-                            <option key={a.name} value={a.name}>{a.name}</option>
+        <div className="container">
+            <div className="left-panel">
+                <div className="header">
+                    <h1 className="title">Maze Solver</h1>
+                    <p className="subtitle">Visualize pathfinding algorithms</p>
+                </div>
+
+                <div className="controls-section">
+                    <h2 className="section-title">Choose Algorithm</h2>
+                    <div className="algorithms-grid">
+                        {ALGORITHMS.map(algo => (
+                            <button
+                                key={algo.name}
+                                onClick={() => setSelectedAlgorithm(algo.name)}
+                                className={`algorithm-btn ${selectedAlgorithm === algo.name ? 'active' : ''}`}
+                                disabled={isSolving}
+                            >
+                                {algo.name}
+                            </button>
                         ))}
-                    </select>
-                </label>
-                <label className="flex items-center gap-2">
-                    Extra Paths:
-                    <input
-                        type="number"
-                        min={0}
-                        max={Math.floor((ROWS * COLS) / 2)}
-                        value={extraPaths}
-                        onChange={e => setExtraPaths(Number(e.target.value))}
-                        className="text-black px-2 py-1 rounded w-16"
-                    />
-                </label>
-                <button
-                    onClick={handleGenerate}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                    disabled={isSolving}
-                >
-                    Generate Maze
-                </button>
-                <button
-                    onClick={handleStart}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-                    disabled={isSolving}
-                >
-                    Solve
-                </button>
+                    </div>
+
+                    <div className="action-buttons">
+                        <button
+                            onClick={handleGenerate}
+                            className="btn btn-primary"
+                            disabled={isSolving}
+                        >
+                            Generate New Maze
+                        </button>
+                        <button
+                            onClick={handleStart}
+                            className="btn btn-secondary"
+                            disabled={isSolving}
+                        >
+                            Solve Maze
+                        </button>
+                    </div>
+                </div>
+
+                <div className="instructions">
+                    <h3>How to Use</h3>
+                    <ul>
+                        <li>Select an algorithm from the buttons above</li>
+                        <li>Click "Generate New Maze" to create a new puzzle</li>
+                        <li>Click "Solve Maze" to watch the algorithm in action</li>
+                        <li>Use arrow keys or WASD to navigate manually</li>
+                        <li>Green square is the start, red square is the goal</li>
+                        <li>Blue path shows the optimal solution</li>
+                    </ul>
+                </div>
             </div>
-            <MazeCanvas
-                grid={grid}
-                visited={visited}
-                path={path}
-                showVisited={showVisited}
-                showPath={showPath}
-                player={player}
-                cellSize={32}
-            />
+
+            <div className="right-panel">
+                <MazeCanvas
+                    grid={grid}
+                    visited={visited}
+                    path={path}
+                    showVisited={showVisited}
+                    showPath={showPath}
+                    player={player}
+                    cellSize={32}
+                />
+            </div>
         </div>
     );
 } 

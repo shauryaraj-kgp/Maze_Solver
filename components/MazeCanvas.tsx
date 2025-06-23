@@ -151,29 +151,12 @@ const MazeCanvas: React.FC<MazeCanvasProps> = ({
     }, [grid, visited, path, showVisited, showPath, player, cellSize, rows, cols, width, height]);
 
     return (
-        <>
-            <canvas
-                ref={canvasRef}
-                width={width}
-                height={height}
-                className="maze-canvas"
-            />
-            <style jsx>{`
-                .maze-canvas {
-                    border: 3px solid #00eaff;
-                    border-radius: 20px;
-                    background: #0a1124;
-                    display: block;
-                    margin: 0 auto;
-                    box-shadow: 0 0 40px #00eaff44, 0 8px 40px #0a1836cc;
-                    transition: box-shadow 0.2s;
-                }
-                .maze-canvas:focus {
-                    outline: none;
-                    box-shadow: 0 0 60px #00eaffcc, 0 8px 40px #0a1836cc;
-                }
-            `}</style>
-        </>
+        <canvas
+            ref={canvasRef}
+            width={width}
+            height={height}
+            className="maze-canvas"
+        />
     );
 };
 

@@ -6,9 +6,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="bg-maze-bg text-white font-sans">
+    <html lang="en">
       <body>
-        <main className="min-h-screen flex flex-col items-center justify-center bg-maze-bg">
+        <main>
           {children}
         </main>
       </body>

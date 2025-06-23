@@ -241,6 +241,7 @@ export default function MazePage() {
                                             <div className="ranking-stats">
                                                 <span className="ranking-time">{formatTime(record.time)}</span>
                                                 <span className="ranking-visits">({record.visitedCount} visited)</span>
+                                                <span className="ranking-path">({record.pathLength} blocks)</span>
                                             </div>
                                         </div>
                                     </div>

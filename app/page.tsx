@@ -1,171 +1,58 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import MazeCanvas from '../components/MazeCanvas';
-import { generateMaze } from '../lib/mazeGenerator';
-import { bfs } from '../lib/algorithms/bfs';
-import { dfs } from '../lib/algorithms/dfs';
-import { aStar } from '../lib/algorithms/astar';
-import { backtracking } from '../lib/algorithms/backtracking';
-import { Cell, Coord, Step } from '../types/types';
+import React from 'react';
+import Link from 'next/link';
+import '../styles/home.css';
 
-const ROWS = 15;
-const COLS = 20;
-const ALGORITHMS = [
-    { name: 'BFS', fn: bfs, description: 'Breadth-First Search' },
-    { name: 'DFS', fn: dfs, description: 'Depth-First Search' },
-    { name: 'A*', fn: aStar, description: 'A* Algorithm' },
-    { name: 'Backtracking', fn: backtracking, description: 'Backtracking' },
-];
-
-export default function Home() {
-    const [grid, setGrid] = useState<Cell[][]>(() => generateMaze(ROWS, COLS, 50));
-    const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>('BFS');
-    const [visited, setVisited] = useState<Step[]>([]);
-    const [path, setPath] = useState<Step[]>([]);
-    const [showVisited, setShowVisited] = useState(true);
-    const [showPath, setShowPath] = useState(true);
-    const [isSolving, setIsSolving] = useState(false);
-    const [player, setPlayer] = useState<Coord>({ row: 0, col: 0 });
-    const animationRef = useRef<number | null>(null);
-
-    // Generate a new maze
-    const handleGenerate = () => {
-        setGrid(generateMaze(ROWS, COLS, 50));
-        setVisited([]);
-        setPath([]);
-        setPlayer({ row: 0, col: 0 });
-        setIsSolving(false);
-    };
-
-    // Animate the pathfinding steps
-    const animateSteps = (visitedSteps: Step[], pathSteps: Step[]) => {
-        setIsSolving(true);
-        setVisited([]);
-        setPath([]);
-        let v = 0;
-        let p = 0;
-        const animate = () => {
-            if (v < visitedSteps.length) {
-                setVisited(visitedSteps.slice(0, v + 1));
-                v++;
-                animationRef.current = window.setTimeout(animate, 12);
-            } else if (p < pathSteps.length) {
-                setPath(pathSteps.slice(0, p + 1));
-                p++;
-                animationRef.current = window.setTimeout(animate, 32);
-            } else {
-                setIsSolving(false);
-            }
-        };
-        animate();
-    };
-
-    // Start pathfinding
-    const handleStart = () => {
-        if (isSolving) return;
-        const start: Coord = { row: 0, col: 0 };
-        const end: Coord = { row: ROWS - 1, col: COLS - 1 };
-        const algo = ALGORITHMS.find(a => a.name === selectedAlgorithm);
-        if (!algo) return;
-        const { visited: visitedSteps, path: pathSteps } = algo.fn(grid, start, end);
-        animateSteps(visitedSteps, pathSteps);
-    };
-
-    // Player movement with arrow keys/WASD
-    React.useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (isSolving) return;
-            const { row, col } = player;
-            let nRow = row, nCol = col;
-            if (e.key === 'ArrowUp' || e.key === 'w') nRow--;
-            if (e.key === 'ArrowDown' || e.key === 's') nRow++;
-            if (e.key === 'ArrowLeft' || e.key === 'a') nCol--;
-            if (e.key === 'ArrowRight' || e.key === 'd') nCol++;
-            if (
-                nRow >= 0 && nRow < ROWS &&
-                nCol >= 0 && nCol < COLS &&
-                !grid[row][col].walls[
-                nRow < row ? 'top' : nRow > row ? 'bottom' : nCol < col ? 'left' : nCol > col ? 'right' : 'top'
-                ]
-            ) {
-                setPlayer({ row: nRow, col: nCol });
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [player, grid, isSolving]);
-
-    // Clean up animation on unmount
-    React.useEffect(() => {
-        return () => {
-            if (animationRef.current) clearTimeout(animationRef.current);
-        };
-    }, []);
-
+export default function HomePage() {
     return (
-        <div className="container">
-            <div className="left-panel">
-                <div className="header">
-                    <h1 className="title">Maze Solver</h1>
-                    <p className="subtitle">Visualize pathfinding algorithms</p>
+        <div className="welcome-container">
+            <div className="welcome-content">
+                <div className="welcome-header">
+                    <h1 className="welcome-title">Maze Solver</h1>
+                    <p className="welcome-subtitle">Visualize Pathfinding Algorithms</p>
                 </div>
 
-                <div className="controls-section">
-                    <h2 className="section-title">Choose Algorithm</h2>
-                    <div className="algorithms-grid">
-                        {ALGORITHMS.map(algo => (
-                            <button
-                                key={algo.name}
-                                onClick={() => setSelectedAlgorithm(algo.name)}
-                                className={`algorithm-btn ${selectedAlgorithm === algo.name ? 'active' : ''}`}
-                                disabled={isSolving}
-                            >
-                                {algo.name}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="action-buttons">
-                        <button
-                            onClick={handleGenerate}
-                            className="btn btn-primary"
-                            disabled={isSolving}
-                        >
-                            Generate New Maze
-                        </button>
-                        <button
-                            onClick={handleStart}
-                            className="btn btn-secondary"
-                            disabled={isSolving}
-                        >
-                            Solve Maze
-                        </button>
+                <div className="welcome-features">
+                    <h2>What You Can Do</h2>
+                    <div className="features-grid">
+                        <div className="feature-card">
+                            <div className="feature-icon">🧠</div>
+                            <h3>Compare Algorithms</h3>
+                            <p>Watch BFS, DFS, A*, and Backtracking solve the same maze</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">⏱️</div>
+                            <h3>Performance Tracking</h3>
+                            <p>See which algorithm is fastest and most efficient</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">🎮</div>
+                            <h3>Interactive Play</h3>
+                            <p>Use arrow keys or WASD to navigate manually</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">🎯</div>
+                            <h3>Real-time Visualization</h3>
+                            <p>Watch algorithms explore and find the optimal path</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="instructions">
-                    <h3>How to Use</h3>
+                <div className="welcome-instructions">
+                    <h2>How It Works</h2>
                     <ul>
-                        <li>Select an algorithm from the buttons above</li>
-                        <li>Click "Generate New Maze" to create a new puzzle</li>
-                        <li>Click "Solve Maze" to watch the algorithm in action</li>
-                        <li>Use arrow keys or WASD to navigate manually</li>
-                        <li>Green square is the start, red square is the goal</li>
-                        <li>Blue path shows the optimal solution</li>
+                        <li>Choose from 4 different pathfinding algorithms</li>
+                        <li>Generate new mazes with varying complexity</li>
+                        <li>Watch algorithms solve in real-time with visual feedback</li>
+                        <li>Compare performance metrics and rankings</li>
+                        <li>Navigate manually using keyboard controls</li>
+                        <li>Green square = Start, Red square = Goal</li>
                     </ul>
                 </div>
-            </div>
 
-            <div className="right-panel">
-                <MazeCanvas
-                    grid={grid}
-                    visited={visited}
-                    path={path}
-                    showVisited={showVisited}
-                    showPath={showPath}
-                    player={player}
-                    cellSize={32}
-                />
+                <Link href="/maze" className="welcome-start-btn">
+                    Start Maze Solver
+                </Link>
             </div>
         </div>
     );

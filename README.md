@@ -38,7 +38,7 @@ A Next.js + TypeScript application that visualizes pathfinding algorithms throug
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/shauryaraj-kgp/Maze_Solver.git
    cd Maze_Solver
    ```
 

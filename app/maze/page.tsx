@@ -4,7 +4,7 @@ import MazeCanvas from '../../components/MazeCanvas';
 import { generateMaze } from '../../lib/mazeGenerator';
 import { bfs } from '../../lib/algorithms/bfs';
 import { dfs } from '../../lib/algorithms/dfs';
-import { aStar } from '../../lib/algorithms/astar';
+import { dijkstra } from '../../lib/algorithms/dijkstra';
 import { backtracking } from '../../lib/algorithms/backtracking';
 import { Cell, Coord, Step } from '../../types/types';
 import '../../styles/maze.css';
@@ -14,7 +14,7 @@ const COLS = 20;
 const ALGORITHMS = [
     { name: 'BFS', fn: bfs, description: 'Breadth-First Search' },
     { name: 'DFS', fn: dfs, description: 'Depth-First Search' },
-    { name: 'A*', fn: aStar, description: 'A* Algorithm' },
+    { name: "Dijkstra's", fn: dijkstra, description: "Dijkstra's Algorithm" },
     { name: 'Backtracking', fn: backtracking, description: 'Backtracking' },
 ];
 

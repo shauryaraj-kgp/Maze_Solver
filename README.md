@@ -1,13 +1,13 @@
 # Maze Solver
 
-A Next.js + TypeScript application that visualizes pathfinding algorithms through interactive maze solving. Compare the performance of BFS, DFS, A*, and Backtracking algorithms in real-time with beautiful animations and performance tracking.
+A Next.js + TypeScript application that visualizes pathfinding algorithms through interactive maze solving. Compare the performance of BFS, DFS, Dijkstra's, and Backtracking algorithms in real-time with beautiful animations and performance tracking.
 
 ## Features
 
 ### 🎯 **Algorithm Visualization**
 - **Breadth-First Search (BFS)** - Explores level by level
 - **Depth-First Search (DFS)** - Explores deep paths first
-- **A* Algorithm** - Heuristic-based optimal pathfinding
+- **Dijkstra's Algorithm** - Uniform-cost optimal pathfinding
 - **Backtracking** - Systematic exploration with backtracking
 
 ### ⏱️ **Performance Tracking**
@@ -87,7 +87,7 @@ Maze_Solver/
 │   ├── algorithms/
 │   │   ├── bfs.ts           # Breadth-First Search
 │   │   ├── dfs.ts           # Depth-First Search
-│   │   ├── astar.ts         # A* Algorithm
+│   │   ├── dijkstra.ts      # Dijkstra's Algorithm
 │   │   └── backtracking.ts  # Backtracking
 │   └── mazeGenerator.ts     # Maze generation logic
 ├── styles/
@@ -103,7 +103,7 @@ Maze_Solver/
 ### **Algorithms Implemented**
 - **BFS**: Uses queue, guarantees shortest path
 - **DFS**: Uses stack, explores deep paths first
-- **A***: Uses heuristic + cost, optimal pathfinding
+- **Dijkstra's**: Uniform-cost search, optimal pathfinding
 - **Backtracking**: Systematic exploration with memory
 
 ### **Performance Features**

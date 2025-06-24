@@ -1,7 +1,7 @@
 import { Cell, Coord, Step } from '../../types/types';
 
 // Breadth-First Search for maze pathfinding
-// Returns { visited: Step[], path: Step[] }
+// Treats all cells as cost 1, regardless of terrain
 export function bfs(grid: Cell[][], start: Coord, end: Coord): { visited: Step[]; path: Step[] } {
     const rows = grid.length;
     const cols = grid[0].length;

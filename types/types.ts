@@ -3,6 +3,8 @@ export type Coord = {
     col: number;
 };
 
+export type TerrainType = 'normal' | 'soil' | 'water' | 'river';
+
 export type Cell = {
     row: number;
     col: number;
@@ -13,6 +15,7 @@ export type Cell = {
         left: boolean;
     };
     visited: boolean;
+    terrain?: TerrainType;
 };
 
 export type Step = {

@@ -1,5 +1,14 @@
 import { Cell, Coord, Step } from '../../types/types';
 
+function getTerrainCost(cell: Cell): number {
+    switch (cell.terrain) {
+        case 'soil': return 2;
+        case 'water': return 5;
+        case 'river': return 8;
+        default: return 1;
+    }
+}
+
 export function dijkstra(
     grid: Cell[][],
     start: Coord,
@@ -43,7 +52,7 @@ export function dijkstra(
                 nc >= 0 && nc < cols &&
                 !grid[row][col].walls[wall]
             ) {
-                const alt = dist[row][col] + 1;
+                const alt = dist[row][col] + getTerrainCost(grid[nr][nc]);
                 if (alt < dist[nr][nc]) {
                     dist[nr][nc] = alt;
                     prev[nr][nc] = { row, col };

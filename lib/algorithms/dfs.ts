@@ -29,7 +29,8 @@ export function dfs(grid: Cell[][], start: Coord, end: Coord): { visited: Step[]
                 nRow >= 0 && nRow < rows &&
                 nCol >= 0 && nCol < cols &&
                 !cell.walls[wall as keyof typeof cell.walls] &&
-                !visited[nRow][nCol]
+                !visited[nRow][nCol] &&
+                !grid[nRow][nCol].bomb
             ) {
                 stack.push({ row: nRow, col: nCol });
                 visited[nRow][nCol] = true;

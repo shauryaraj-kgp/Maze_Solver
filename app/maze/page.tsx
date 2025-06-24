@@ -6,7 +6,7 @@ import { bfs } from '../../lib/algorithms/bfs';
 import { dfs } from '../../lib/algorithms/dfs';
 import { dijkstra } from '../../lib/algorithms/dijkstra';
 import { backtracking } from '../../lib/algorithms/backtracking';
-import { Cell, Coord, Step } from '../../types/types';
+import { Cell, Coord, Step, TerrainType } from '../../types/types';
 import '../../styles/maze.css';
 
 const ROWS = 15;
@@ -41,6 +41,8 @@ export default function MazePage() {
     const animationRef = useRef<number | null>(null);
     const timerRef = useRef<number | null>(null);
     const startTimeRef = useRef<number>(0);
+    const [weightedMaze, setWeightedMaze] = useState(false);
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
     // Timer effect
     useEffect(() => {
@@ -85,6 +87,7 @@ export default function MazePage() {
         startTimeRef.current = 0;
         setIsTimerRunning(false);
         setPerformanceRecords([]); // Clear performance records for new maze
+        setWeightedMaze(false); // Reset weighted maze
     };
 
     // Animate the pathfinding steps
@@ -123,6 +126,18 @@ export default function MazePage() {
                     timestamp: new Date()
                 };
                 setPerformanceRecords(prev => [...prev, record]);
+
+                // Check if finish is reached (after animation)
+                const end = { row: ROWS - 1, col: COLS - 1 };
+                if (
+                    pathSteps.length === 0 ||
+                    pathSteps[pathSteps.length - 1].coord.row !== end.row ||
+                    pathSteps[pathSteps.length - 1].coord.col !== end.col
+                ) {
+                    setStatusMessage('Finish not reached!');
+                } else {
+                    setStatusMessage(null);
+                }
             }
         };
         animate();
@@ -181,6 +196,48 @@ export default function MazePage() {
     // Get sorted performance records
     const sortedRecords = [...performanceRecords].sort((a, b) => a.time - b.time);
 
+    // Add handleRefresh function to reset the maze to its initial state (including bombs)
+    const handleRefresh = () => {
+        setGrid(prevGrid => prevGrid.map(row => row.map(cell => ({ ...cell, visited: false, bomb: false }))));
+        setVisited([]);
+        setPath([]);
+        setPlayer({ row: 0, col: 0 });
+        setIsSolving(false);
+        setTimer(0);
+        startTimeRef.current = 0;
+        setIsTimerRunning(false);
+        setPerformanceRecords([]);
+        setWeightedMaze(false);
+    };
+
+    // Utility to randomly assign terrain
+    const randomizeTerrain = (grid: Cell[][]): Cell[][] => {
+        const terrains: TerrainType[] = ['normal', 'soil', 'water', 'river'];
+        return grid.map((row, rIdx) =>
+            row.map((cell, cIdx) => {
+                if ((rIdx === 0 && cIdx === 0) || (rIdx === ROWS - 1 && cIdx === COLS - 1) || cell.bomb) {
+                    return { ...cell, terrain: 'normal' };
+                }
+                // 20% chance for soil, 10% for water, 5% for river, rest normal
+                const rand = Math.random();
+                let terrain: TerrainType = 'normal';
+                if (rand < 0.05) terrain = 'river';
+                else if (rand < 0.15) terrain = 'water';
+                else if (rand < 0.35) terrain = 'soil';
+                return { ...cell, terrain };
+            })
+        );
+    };
+
+    // Weighted Maze toggle effect
+    useEffect(() => {
+        if (weightedMaze) {
+            setGrid(prevGrid => randomizeTerrain(prevGrid));
+        } else {
+            setGrid(prevGrid => prevGrid.map(row => row.map(cell => ({ ...cell, terrain: 'normal' }))));
+        }
+    }, [weightedMaze]);
+
     return (
         <div className="container">
             <div className="left-panel">
@@ -219,7 +276,26 @@ export default function MazePage() {
                         >
                             Solve Maze
                         </button>
+                        <button
+                            onClick={handleRefresh}
+                            className="btn btn-tertiary"
+                            disabled={isSolving}
+                        >
+                            Refresh
+                        </button>
+                        <button
+                            onClick={() => setWeightedMaze(w => !w)}
+                            className={`btn ${weightedMaze ? 'btn-info' : 'btn-tertiary'}`}
+                            disabled={isSolving}
+                        >
+                            {weightedMaze ? 'Weighted Maze: ON' : 'Weighted Maze: OFF'}
+                        </button>
                     </div>
+                    {statusMessage && (
+                        <div className="status-message" style={{ color: 'white', background: 'red', marginTop: 12, fontWeight: 'bold', padding: 8, borderRadius: 6, textAlign: 'center', fontSize: '1.1em' }}>
+                            {statusMessage}
+                        </div>
+                    )}
                 </div>
 
                 <div className="performance-section">

@@ -13,6 +13,7 @@ export function backtracking(grid: Cell[][], start: Coord, end: Coord): { visite
     function dfs(row: number, col: number): boolean {
         if (row < 0 || row >= rows || col < 0 || col >= cols) return false;
         if (visited[row][col]) return false;
+        if (grid[row][col].bomb) return false; // skip bomb cells
         visited[row][col] = true;
         visitedSteps.push({ coord: { row, col }, isPath: false });
         if (row === end.row && col === end.col) {

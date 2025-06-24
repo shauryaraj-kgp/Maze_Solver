@@ -9,6 +9,7 @@ interface MazeCanvasProps {
     showPath: boolean;
     player?: Coord;
     cellSize?: number;
+    onCellClick?: (row: number, col: number) => void;
 }
 
 const MazeCanvas: React.FC<MazeCanvasProps> = ({
@@ -19,6 +20,7 @@ const MazeCanvas: React.FC<MazeCanvasProps> = ({
     showPath,
     player,
     cellSize = 32,
+    onCellClick,
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rows = grid.length;
@@ -72,6 +74,21 @@ const MazeCanvas: React.FC<MazeCanvasProps> = ({
             ctx.stroke();
             ctx.restore();
         }
+
+        // Draw terrain overlays
+        ctx.save();
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const cell = grid[row][col];
+                if (cell.terrain && cell.terrain !== 'normal') {
+                    if (cell.terrain === 'soil') ctx.fillStyle = 'rgba(139, 69, 19, 0.45)'; // brown
+                    else if (cell.terrain === 'water') ctx.fillStyle = 'rgba(30, 144, 255, 0.45)'; // blue
+                    else if (cell.terrain === 'river') ctx.fillStyle = 'rgba(0, 255, 255, 0.45)'; // cyan
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+        ctx.restore();
 
         // Draw maze walls
         ctx.save();
@@ -150,12 +167,27 @@ const MazeCanvas: React.FC<MazeCanvasProps> = ({
         }
     }, [grid, visited, path, showVisited, showPath, player, cellSize, rows, cols, width, height]);
 
+    // Handle cell click
+    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!onCellClick) return;
+        const rect = canvasRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const col = Math.floor(x / cellSize);
+        const row = Math.floor(y / cellSize);
+        if (row >= 0 && row < rows && col >= 0 && col < cols) {
+            onCellClick(row, col);
+        }
+    };
+
     return (
         <canvas
             ref={canvasRef}
             width={width}
             height={height}
             className="maze-canvas"
+            onClick={handleCanvasClick}
         />
     );
 };
